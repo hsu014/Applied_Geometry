@@ -3,6 +3,7 @@
 
 #include "scenario.h"
 #include "testtorus.h"
+#include "application/my_curve1.h"
 
 
 // hidmanager
@@ -66,16 +67,23 @@ void Scenario::initializeScenario() {
   GMlib::Material mm(GMlib::GMmaterial::polishedBronze());
   mm.set(45.0);
 
-  auto ptom = new TestTorus(1.0f, 0.4f, 0.6f);
-  ptom->toggleDefaultVisualizer();
-  ptom->sample(60,60,1,1);
-  this->scene()->insert(ptom);
-  auto ptrack = new GMlib::PathTrack();
-  ptrack->setLineWidth(2);
-  ptom->insert(ptrack);
-  auto ptrack2 = new GMlib::PathTrackArrows();
-  ptrack2->setArrowLength(2);
-  ptom->insert(ptrack2);
+  // auto ptom = new TestTorus(1.0f, 0.4f, 0.6f);
+  // ptom->toggleDefaultVisualizer();
+  // ptom->sample(60,60,1,1);
+  // this->scene()->insert(ptom);
+  // auto ptrack = new GMlib::PathTrack();
+  // ptrack->setLineWidth(2);
+  // ptom->insert(ptrack);
+  // auto ptrack2 = new GMlib::PathTrackArrows();
+  // ptrack2->setArrowLength(2);
+  // ptom->insert(ptrack2);
+
+  auto tcurve = new MyCurve1<float>(5, 5, 5, 4);
+  tcurve->toggleDefaultVisualizer();
+  tcurve->sample(200,0);
+  tcurve->setLineWidth(4);
+
+  this->scene()->insert(tcurve);
 
 }
 
