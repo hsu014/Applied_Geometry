@@ -27,7 +27,7 @@ protected:
     T                   getStartP() const override;
     T                   getEndP()   const override;
 
-    // Protected data for the curve
+private:
     T                   _a;
     T                   _b;
     T                   _k_x;
@@ -61,7 +61,7 @@ inline
 
 
 
-// The destructor
+// Destructor
 template <typename T>
 MyModelCurve1<T>::~MyModelCurve1() {}
 
