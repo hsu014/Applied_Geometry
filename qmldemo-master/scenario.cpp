@@ -4,6 +4,7 @@
 #include "scenario.h"
 #include "testtorus.h"
 #include "application/my_model_curve1.h"
+#include "application/my_bspline.h".h"
 
 
 // hidmanager
@@ -67,6 +68,7 @@ void Scenario::initializeScenario() {
   GMlib::Material mm(GMlib::GMmaterial::polishedBronze());
   mm.set(45.0);
 
+  /* Test torus */
   // auto ptom = new TestTorus(1.0f, 0.4f, 0.6f);
   // ptom->toggleDefaultVisualizer();
   // ptom->sample(60,60,1,1);
@@ -78,12 +80,33 @@ void Scenario::initializeScenario() {
   // ptrack2->setArrowLength(2);
   // ptom->insert(ptrack2);
 
-  auto tcurve = new MyModelCurve1<float>(5, 5, 5, 4);
-  tcurve->toggleDefaultVisualizer();
-  tcurve->sample(200,0);
-  tcurve->setLineWidth(4);
+  /* Test model curve */
+  // auto tcurve = new MyModelCurve1<float>(5, 5, 5, 4);
+  // tcurve->toggleDefaultVisualizer();
+  // tcurve->sample(200,0);
+  // tcurve->setLineWidth(4);
+  // this->scene()->insert(tcurve);
 
-  this->scene()->insert(tcurve);
+  /* Test b-spline */
+  GMlib::DVector<GMlib::Vector<float,3>> points(10);
+  points[0] = GMlib::Vector<float,3>(0, 0, 0);
+  points[1] = GMlib::Vector<float,3>(0, 2, 0);
+  points[2] = GMlib::Vector<float,3>(2, 2, 0);
+  points[3] = GMlib::Vector<float,3>(4, 1.5, 0);
+  points[4] = GMlib::Vector<float,3>(4, 0, 0);
+  points[5] = GMlib::Vector<float,3>(3, 0, 0);
+  points[6] = GMlib::Vector<float,3>(3, 1, 0);
+  points[7] = GMlib::Vector<float,3>(1, 1, 0);
+  points[8] = GMlib::Vector<float,3>(1, 0.5, 0);
+  points[9] = GMlib::Vector<float,3>(2, 0, 0);
+
+
+
+  auto test_bspline = new MyBSpline<float>(points);
+  test_bspline->toggleDefaultVisualizer();
+  test_bspline->sample(100,0);
+  test_bspline->setLineWidth(4);
+  this->scene()->insert(test_bspline);
 
 }
 
