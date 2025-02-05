@@ -1,6 +1,6 @@
 
-#ifndef MYCURVE1_H
-#define MYCURVE1_H
+#ifndef MYMODELCURVE1_H
+#define MYMODELCURVE1_H
 
 
 #include "../../gmlib-master/modules/parametrics/gmpcurve.h"
@@ -11,13 +11,13 @@ using namespace GMlib;
 // Model curve 1
 // Lissajous curve
 template <typename T>
-class MyCurve1 : public PCurve<T,3> {
-    GM_SCENEOBJECT(MyCurve1)
+class MyModelCurve1 : public PCurve<T,3> {
+    GM_SCENEOBJECT(MyModelCurve1)
 
 public:
-    MyCurve1(T a, T b, T k_x, T k_y);
-    MyCurve1( const MyCurve1<T>& copy );
-    virtual ~MyCurve1();
+    MyModelCurve1(T a, T b, T k_x, T k_y);
+    MyModelCurve1( const MyModelCurve1<T>& copy );
+    virtual ~MyModelCurve1();
 
     bool                isClosed() const override;
 
@@ -33,13 +33,14 @@ protected:
     T                   _k_x;
     T                   _k_y;
 
-}; // END class MyCurve1
+}; // END class MyModelCurve1
 
 
 
+// Constructor
 template <typename T>
 inline
-    MyCurve1<T>::MyCurve1(T a, T b, T k_x, T k_y) : PCurve<T,3>(20, 0, 0) {
+    MyModelCurve1<T>::MyModelCurve1(T a, T b, T k_x, T k_y) : PCurve<T,3>(20, 0, 0) {
     _a = a;
     _b = b;
     _k_x = k_x;
@@ -48,9 +49,10 @@ inline
 
 
 
+// Copy constructor
 template <typename T>
 inline
-    MyCurve1<T>::MyCurve1( const MyCurve1<T>& copy ) : PCurve<T,3>(copy) {
+    MyModelCurve1<T>::MyModelCurve1( const MyModelCurve1<T>& copy ) : PCurve<T,3>(copy) {
     _a = copy._a;
     _b = copy._b;
     _k_x = copy._k_x;
@@ -59,17 +61,14 @@ inline
 
 
 
-/*! MyCurve1<T>::~MyCurve1()
-   *  The destructor
-   *  clean up and destroy all private data
-   */
+// The destructor
 template <typename T>
-MyCurve1<T>::~MyCurve1() {}
+MyModelCurve1<T>::~MyModelCurve1() {}
 
 
 
 template <typename T>
-bool MyCurve1<T>::isClosed() const {
+bool MyModelCurve1<T>::isClosed() const {
     return true;
 }
 
@@ -85,8 +84,7 @@ bool MyCurve1<T>::isClosed() const {
    *  \param  l[in]  (dummy) because left and right are always equal
    */
 template <typename T>
-void MyCurve1<T>::eval( T t, int d, bool /*l*/ ) const {
-
+void MyModelCurve1<T>::eval( T t, int d, bool /*l*/ ) const {
     this->_p.setDim( d + 1 );
 
     this->_p[0][0] = _a * cos(_k_x * t);            // x
@@ -97,17 +95,17 @@ void MyCurve1<T>::eval( T t, int d, bool /*l*/ ) const {
 
 
 template <typename T>
-T MyCurve1<T>::getStartP() const {
+T MyModelCurve1<T>::getStartP() const {
     return T(0);
 }
 
 
 
 template <typename T>
-T MyCurve1<T>::getEndP() const {
+T MyModelCurve1<T>::getEndP() const {
     return T(M_2PI);
 }
 
 
 
-#endif // MYCURVE1_H
+#endif // MYMODELCURVE1_H

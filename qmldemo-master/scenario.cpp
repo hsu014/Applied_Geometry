@@ -3,7 +3,7 @@
 
 #include "scenario.h"
 #include "testtorus.h"
-#include "application/my_curve1.h"
+#include "application/my_model_curve1.h"
 
 
 // hidmanager
@@ -78,7 +78,7 @@ void Scenario::initializeScenario() {
   // ptrack2->setArrowLength(2);
   // ptom->insert(ptrack2);
 
-  auto tcurve = new MyCurve1<float>(5, 5, 5, 4);
+  auto tcurve = new MyModelCurve1<float>(5, 5, 5, 4);
   tcurve->toggleDefaultVisualizer();
   tcurve->sample(200,0);
   tcurve->setLineWidth(4);
