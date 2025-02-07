@@ -3,7 +3,7 @@
 #define MYBSPLINE_H
 
 
-#include "../../gmlib-master/modules/parametrics/gmpcurve.h"
+#include "../gmlib-master/modules/parametrics/gmpcurve.h"
 
 using namespace GMlib;
 
@@ -53,8 +53,6 @@ inline
 
     int d = 2;                                      // Degree of b-spline hardcoded as 2
     make_knot_vector(_n, d, 0, _n-d);
-
-
 }
 
 
@@ -105,7 +103,7 @@ inline
 // Copy constructor
 template <typename T>
 inline
-    MyBSpline<T>::MyBSpline( const MyBSpline<T>& copy ) : PCurve<T,3>(copy) {
+    MyBSpline<T>::MyBSpline(const MyBSpline<T>& copy ) : PCurve<T,3>(copy) {
     _t = copy._t;
     _c = copy._c;
     _n = copy._n;
@@ -178,6 +176,8 @@ Vector<T,3> MyBSpline<T>::B(int i, T t) const {
            (W(1, i, t))*(1 - W(2, i, t));
 
     b[2] = (W(1, i, t))*(W(2, i, t));           // b_i;
+
+    // std::cout << "t: " << t << ". b: " << b << std::endl;
 
     // const int d = 2;
     // Vector<T,(d+1)> b2;

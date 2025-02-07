@@ -3,7 +3,7 @@
 #define MYMODELCURVE1_H
 
 
-#include "../../gmlib-master/modules/parametrics/gmpcurve.h"
+#include "../gmlib-master/modules/parametrics/gmpcurve.h"
 
 using namespace GMlib;
 
