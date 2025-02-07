@@ -3,8 +3,9 @@
 
 #include "scenario.h"
 #include "testtorus.h"
-#include "application/my_model_curve1.h"
-#include "application/my_bspline.h".h"
+#include "my_model_curve1.h"
+#include "my_bspline.h"
+#include "my_subdivision_curve.h"
 
 
 // hidmanager
@@ -29,10 +30,7 @@ inline
 }
 
 
-
-
 void Scenario::initializeScenario() {
-
     // Insert a light
     GMlib::Point<GLfloat,3> init_light_pos( 2.0, 4.0, 10 );
     GMlib::PointLight *light = new GMlib::PointLight(  GMlib::GMcolor::white(), GMlib::GMcolor::white(),
@@ -68,70 +66,91 @@ void Scenario::initializeScenario() {
     GMlib::Material mm(GMlib::GMmaterial::polishedBronze());
     mm.set(45.0);
 
+    bool drawTorus = false;
+    bool drawModelCurve = false;
+    bool drawBSpline1 = false;
+    bool drawBSpline2 = false;
+    bool drawSubdivisionCurve = true;
+
+
     /* Test torus */
-    // auto ptom = new TestTorus(1.0f, 0.4f, 0.6f);
-    // ptom->toggleDefaultVisualizer();
-    // ptom->sample(60,60,1,1);
-    // this->scene()->insert(ptom);
-    // auto ptrack = new GMlib::PathTrack();
-    // ptrack->setLineWidth(2);
-    // ptom->insert(ptrack);
-    // auto ptrack2 = new GMlib::PathTrackArrows();
-    // ptrack2->setArrowLength(2);
-    // ptom->insert(ptrack2);
-
-    /* Test model curve */
-    // auto tcurve = new MyModelCurve1<float>(5, 5, 5, 4);
-    // tcurve->toggleDefaultVisualizer();
-    // tcurve->sample(200,0);
-    // tcurve->setLineWidth(4);
-    // this->scene()->insert(tcurve);
-
-    /* Test b-spline */
-
-
-
-
-
-    // Constructor 1
-    GMlib::DVector<GMlib::Vector<float,3>> points1(10);
-    points1[0] = GMlib::Vector<float,3>(0, 0, 0);
-    points1[1] = GMlib::Vector<float,3>(0, 2, 0);
-    points1[2] = GMlib::Vector<float,3>(2, 2, 0);
-    points1[3] = GMlib::Vector<float,3>(4, 1.5, 0);
-    points1[4] = GMlib::Vector<float,3>(4, 0, 0);
-    points1[5] = GMlib::Vector<float,3>(3, 0, 0);
-    points1[6] = GMlib::Vector<float,3>(3, 1, 0);
-    points1[7] = GMlib::Vector<float,3>(1, 1, 0);
-    points1[8] = GMlib::Vector<float,3>(1, 0.5, 0);
-    points1[9] = GMlib::Vector<float,3>(2, 0, 0);
-
-    auto test_bspline1 = new MyBSpline<float>(points1);
-
-    test_bspline1->toggleDefaultVisualizer();
-    test_bspline1->sample(100,0);
-    test_bspline1->setLineWidth(4);
-    test_bspline1->translate(Vector<float,3>(1,1,1));
-    this->scene()->insert(test_bspline1);
-
-    // Constructor 2
-    int p = 100;
-    float a = 4;
-    float b = 6;
-
-    GMlib::DVector<GMlib::Vector<float,3>> points2(p);
-    for (int i = 0; i < p; i++) {
-        float t = i/float(p) * M_2PI;
-        points2[i] = GMlib::Vector<float,3>(a*sin(t), b*cos(t), 0);
+    if (drawTorus) {
+        auto ptom = new TestTorus(1.0f, 0.4f, 0.6f);
+        ptom->toggleDefaultVisualizer();
+        ptom->sample(60,60,1,1);
+        this->scene()->insert(ptom);
+        auto ptrack = new GMlib::PathTrack();
+        ptrack->setLineWidth(2);
+        ptom->insert(ptrack);
+        auto ptrack2 = new GMlib::PathTrackArrows();
+        ptrack2->setArrowLength(2);
+        ptom->insert(ptrack2);
     }
 
-    auto test_bspline2 = new MyBSpline<float>(points2, 6);
+    /* Test model curve */
+    if (drawModelCurve) {
+        auto tcurve = new MyModelCurve1<float>(5, 5, 5, 4);
+        tcurve->toggleDefaultVisualizer();
+        tcurve->sample(200,0);
+        tcurve->setLineWidth(4);
+        this->scene()->insert(tcurve);
+    }
 
-    test_bspline2->toggleDefaultVisualizer();
-    test_bspline2->sample(100,0);
-    test_bspline2->setLineWidth(4);
-    this->scene()->insert(test_bspline2);
+    /* Test b-spline, Constructor 1 */
+    if (drawBSpline1) {
+        GMlib::DVector<GMlib::Vector<float,3>> points(10);
+        points[0] = GMlib::Vector<float,3>(0, 0, 0);
+        points[1] = GMlib::Vector<float,3>(0, 2, 0);
+        points[2] = GMlib::Vector<float,3>(2, 2, 0);
+        points[3] = GMlib::Vector<float,3>(4, 1.5, 0);
+        points[4] = GMlib::Vector<float,3>(4, 0, 0);
+        points[5] = GMlib::Vector<float,3>(3, 0, 1);
+        points[6] = GMlib::Vector<float,3>(3, 1, 0);
+        points[7] = GMlib::Vector<float,3>(1, 1, 0);
+        points[8] = GMlib::Vector<float,3>(1, 0.5, 0);
+        points[9] = GMlib::Vector<float,3>(2, 0, 0);
 
+        auto test_bspline1 = new MyBSpline<float>(points);
+
+        test_bspline1->toggleDefaultVisualizer();
+        test_bspline1->sample(100,0);
+        test_bspline1->setLineWidth(4);
+        test_bspline1->translate(Vector<float,3>(1,1,1));
+        this->scene()->insert(test_bspline1);
+    }
+
+    /* Test b-spline, Constructor 2 */
+    if (drawBSpline2) {
+        int p = 100;
+        float a = 4;
+        float b = 6;
+
+        GMlib::DVector<GMlib::Vector<float,3>> points(p);
+        for (int i = 0; i < p; i++) {
+            float t = i/float(p) * M_2PI;
+            points[i] = GMlib::Vector<float,3>(a*sin(t), b*cos(t), 0);
+        }
+
+        auto test_bspline2 = new MyBSpline<float>(points, 6);
+
+        test_bspline2->toggleDefaultVisualizer();
+        test_bspline2->sample(100,0);
+        test_bspline2->setLineWidth(4);
+        this->scene()->insert(test_bspline2);
+    }
+
+    /* Test Subdivision curve */
+    if (drawSubdivisionCurve) {
+        GMlib::DVector<GMlib::Vector<float,3>> points(4);
+        points[0] = GMlib::Vector<float,3>(0, 0, 0);
+        points[1] = GMlib::Vector<float,3>(0, 5, 0);
+        points[2] = GMlib::Vector<float,3>(7, 5, 0);
+        points[3] = GMlib::Vector<float,3>(7, 0, 0);
+        auto test_sub = new MySubdivisionCurve<float>(points);
+        test_sub->toggleDefaultVisualizer();
+        test_sub->sample(4,2);
+        this->scene()->insert(test_sub);
+    }
 }
 
 
