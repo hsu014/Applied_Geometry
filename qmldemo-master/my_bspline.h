@@ -29,13 +29,13 @@ protected:
     T                       getEndP()   const override;
 
 private:
-    std::vector<T>          _t;                                 // knot vector
-    DVector<Vector<T,3>>    _c;                                 // control points
-    int                     _n;                                 // Number of control points
+    std::vector<T>          _t;                                         // knot vector
+    DVector<Vector<T,3>>    _c;                                         // control points
+    int                     _n;                                         // Number of control points
 
-    T                       W(int d, int i, T t) const;         // Map domain to 0-1
-    Vector<T,3>             B(int i, T t) const;                // Basis functions for given t
-    int                     find_i(T t) const;                  // Find index i for given t
+    T                       W(int d, int i, T t) const;                 // Map domain to 0-1
+    Vector<T,3>             B(int i, T t) const;                        // Basis functions for given t
+    int                     find_i(T t) const;                          // Find index i for given t
     void                    make_knot_vector(int n, int d, T s, T e);   // Create the knot vector _t
 
 }; // END class MyBSpline
@@ -47,8 +47,6 @@ template <typename T>
 inline
     MyBSpline<T>::MyBSpline(const DVector<Vector<T,3>>& c) : PCurve<T,3>(20, 0, 0), _c(c) {
 
-    // _c = c in start of constructor
-    std::cout << "Control points _c: " << _c << std::endl;
     _n = c.getDim();
 
     int d = 2;                                      // Degree of b-spline hardcoded as 2
@@ -177,21 +175,23 @@ Vector<T,3> MyBSpline<T>::B(int i, T t) const {
 
     b[2] = (W(1, i, t))*(W(2, i, t));           // b_i;
 
-    // std::cout << "t: " << t << ". b: " << b << std::endl;
+    std::cout << "t: " << t << ". b: " << b << std::endl;
 
-    // const int d = 2;
-    // Vector<T,(d+1)> b2;
+    const int d = 2;
+    Vector<T,(d+1)> b2;
 
-    // b2[0] = 0;
-    // for (j=1; j<=d; j++) {
-    //     b2[j] = W(j, i, t) * b2[j-1];
+    b2[0] = 1;
+    for (int j=1; j<=d; j++) {
+        b2[j] = W(j, i, t) * b2[j-1];
 
-    //     for (k=j-1; k>0; k--) {
-    //         b2[k] = W(j, i-j+k, t) * b2[k-1] +
-    //                 (1 - W(j, i-j+k+1, t)) * b2[k];
-    //     }
-    //     b2[0] =
-    // }
+        for (int k=j-1; k>0; k--) {
+            b2[k] = W(j, i-j+k, t) * b2[k-1] +
+                    (1 - W(j, i-j+k+1, t)) * b2[k];
+        }
+        b2[0] = (1 - W(j, i-j, t)) * b2[0];
+    }
+
+    std::cout << "t: " << t << ". b: " << b2 << std::endl;
 
 
     return b;
