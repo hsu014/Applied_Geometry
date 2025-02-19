@@ -175,23 +175,23 @@ Vector<T,3> MyBSpline<T>::B(int i, T t) const {
 
     b[2] = (W(1, i, t))*(W(2, i, t));           // b_i;
 
-    std::cout << "t: " << t << ". b: " << b << std::endl;
+    // std::cout << "t: " << t << ". b: " << b << std::endl;
 
-    const int d = 2;
-    Vector<T,(d+1)> b2;
+    // const int d = 2;
+    // Vector<T,(d+1)> b2;
 
-    b2[0] = 1;
-    for (int j=1; j<=d; j++) {
-        b2[j] = W(j, i, t) * b2[j-1];
+    // b2[0] = 1;
+    // for (int j=1; j<=d; j++) {
+    //     b2[j] = W(j, i, t) * b2[j-1];
 
-        for (int k=j-1; k>0; k--) {
-            b2[k] = W(j, i-j+k, t) * b2[k-1] +
-                    (1 - W(j, i-j+k+1, t)) * b2[k];
-        }
-        b2[0] = (1 - W(j, i-j, t)) * b2[0];
-    }
+    //     for (int k=j-1; k>0; k--) {
+    //         b2[k] = W(j, i-j+k, t) * b2[k-1] +
+    //                 (1 - W(j, i-j+k+1, t)) * b2[k];
+    //     }
+    //     b2[0] = (1 - W(j, i-j, t)) * b2[0];
+    // }
 
-    std::cout << "t: " << t << ". b: " << b2 << std::endl;
+    // std::cout << "t: " << t << ". b: " << b2 << std::endl;
 
 
     return b;
@@ -222,7 +222,7 @@ void MyBSpline<T>::make_knot_vector(int n, int d, T s, T e) {
 
     for (int i = 0; i<=d; i++) _t.push_back(e);
 
-    std::cout << "Knot vector _t: " << _t << std::endl;
+    // std::cout << "Knot vector _t: " << _t << std::endl;
 }
 
 

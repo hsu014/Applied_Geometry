@@ -89,7 +89,7 @@ void MyModelCurve1<T>::eval( T t, int d, bool /*l*/ ) const {
 
     this->_p[0][0] = _a * cos(_k_x * t);            // x
     this->_p[0][1] = _b * sin(_k_y * t);            // y
-    this->_p[0][2] = 0.5 * (_a+_b) / 2 * sin(t);    // z
+    this->_p[0][2] = 0;//0.5 * (_a+_b) / 2 * sin(t);    // z
 }
 
 

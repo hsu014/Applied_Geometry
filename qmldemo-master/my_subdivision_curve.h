@@ -18,7 +18,7 @@ class MySubdivisionCurve : public PCurve<T,3> {
 
 public:
     MySubdivisionCurve(const DVector<Vector<T,3>>& P, bool isClosed=true);
-    MySubdivisionCurve( const MySubdivisionCurve<T>& copy );
+    MySubdivisionCurve(const MySubdivisionCurve<T>& copy );
     virtual ~MySubdivisionCurve();
 
     void                    sample(int m, int d = 0) override;
@@ -107,7 +107,7 @@ template <typename T>
 void MySubdivisionCurve<T>::LaneRiesenfeldClosed(std::vector<DVector<Vector<T,3>>>& ph, int k, int d) const {
 
     // k - number of doublings of points
-    //
+    // d - degree of smoothing
 
     int n = _P.getDim();
     int m = pow(2, k) * n + 1;
