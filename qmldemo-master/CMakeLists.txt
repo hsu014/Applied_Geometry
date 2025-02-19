@@ -28,7 +28,7 @@ endif()
 ####################
 # Configure gmlib2qt
 # find_package(gmlib 0.7 REQUIRED CONFIG NO_DEFAULT_PATH)
-find_package(gmlib 0.7 REQUIRED CONFIG HINTS "C:/Users/hogne/Programmering/DTE-3604_Applied_Geometry/BUILD/gmlib_DEBUG/cmake")
+find_package(gmlib 0.7 REQUIRED CONFIG HINTS "C:/Users/hogne/Programmering/DTE-3604_Applied_Geometry/Code/BUILD/gmlib_DEBUG/cmake")
 target_link_libraries( ${PROJECT_NAME} gmlib::gmlib )
 
 
