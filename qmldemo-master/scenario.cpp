@@ -4,8 +4,10 @@
 #include "scenario.h"
 #include "testtorus.h"
 #include "my_model_curve1.h"
+#include "my_model_curve2.h"
 #include "my_bspline.h"
 #include "my_subdivision_curve.h"
+#include "my_blending_spline_curve.h"
 
 
 // hidmanager
@@ -67,10 +69,12 @@ void Scenario::initializeScenario() {
     mm.set(45.0);
 
     bool drawTorus = false;
-    bool drawModelCurve = false;
+    bool drawModelCurve1 = false;
+    bool drawModelCurve2 = false;
     bool drawBSpline1 = false;
     bool drawBSpline2 = false;
-    bool drawSubdivisionCurve = true;
+    bool drawSubdivisionCurve = false;
+    bool drawBlendingSplineCurve = true;
 
 
     /* Test torus */
@@ -88,12 +92,36 @@ void Scenario::initializeScenario() {
     }
 
     /* Test model curve */
-    if (drawModelCurve) {
-        auto tcurve = new MyModelCurve1<float>(5, 5, 5, 4);
+    if (drawModelCurve1) {
+        auto tcurve = new MyModelCurve1<float>(3, 3, 1, 2);
         tcurve->toggleDefaultVisualizer();
         tcurve->sample(200,0);
         tcurve->setLineWidth(4);
+        tcurve->translate(Vector<float,3>(0,0,0));
         this->scene()->insert(tcurve);
+
+        auto tcurve2 = new MyModelCurve1<float>(3, 3, 5, 3);
+        tcurve2->toggleDefaultVisualizer();
+        tcurve2->sample(200,0);
+        tcurve2->setLineWidth(4);
+        tcurve2->translate(Vector<float,3>(-7,0,0));
+        this->scene()->insert(tcurve2);
+    }
+
+    if (drawModelCurve2) {
+        auto tcurve = new MyModelCurve2<float>(8, 3, 2);
+        tcurve->toggleDefaultVisualizer();
+        tcurve->sample(200,0);
+        tcurve->setLineWidth(4);
+        tcurve->translate(Vector<float,3>(0,-5,0));
+        this->scene()->insert(tcurve);
+
+        auto tcurve2 = new MyModelCurve2<float>(5, 2, 1);
+        tcurve2->toggleDefaultVisualizer();
+        tcurve2->sample(200,0);
+        tcurve2->setLineWidth(4);
+        tcurve2->translate(Vector<float,3>(0, 5, 0));
+        this->scene()->insert(tcurve2);
     }
 
     /* Test b-spline, Constructor 1 */
@@ -146,10 +174,32 @@ void Scenario::initializeScenario() {
         points[1] = GMlib::Vector<float,3>(0, 5, 0);
         points[2] = GMlib::Vector<float,3>(7, 5, 0);
         points[3] = GMlib::Vector<float,3>(7, 0, 0);
+
         auto test_sub = new MySubdivisionCurve<float>(points);
         test_sub->toggleDefaultVisualizer();
         test_sub->sample(4,2);
         this->scene()->insert(test_sub);
+    }
+
+    /* Test blending spline curve */
+    if (drawBlendingSplineCurve) {
+        // auto model_curve = new MyModelCurve1<float>(5, 5, 3, 2);
+        auto model_curve = new MyModelCurve2<float>(8, 3, 1.8);
+        auto blending_spline = new MyBlendingSplineCurve<float>(model_curve, 9);
+
+        blending_spline->toggleDefaultVisualizer();
+        blending_spline->sample(200,0);
+        blending_spline->toggleAnimate();
+
+        blending_spline->translate(Vector<float,3>(-3,0,0));
+        blending_spline->rotate(0.6, Vector<float,3>(0, 1, 0));
+        blending_spline->scale(0.7);
+        blending_spline->setLineWidth(5);
+        blending_spline->setColor(GMlib::Color(255, 0, 0));
+
+        this->scene()->insert(blending_spline);
+
+
     }
 }
 
