@@ -10,8 +10,9 @@
 #include "my_blending_spline_curve.h"
 #include "my_blending_spline_surface.h"
 #include "../gmlib-master/modules/parametrics/surfaces/gmpplane.h"
+#include "../gmlib-master/modules/parametrics/surfaces/gmpcylinder.h"
+#include "../gmlib-master/modules/parametrics/surfaces/gmptorus.h"
 #include "../gmlib-master/modules/parametrics/visualizers/gmpsurfnormalsvisualizer.h"
-
 
 // hidmanager
 #include "hidmanager/defaulthidmanager.h"
@@ -72,20 +73,20 @@ void Scenario::initializeScenario() {
     mm.set(45.0);
 
     GMlib::Material mm2(GMlib::GMmaterial::jade());
-    mm2.set(45.0);
+    mm2.set(10.0);
 
-    bool drawTorus = false;
+    bool drawTestTorus = false;
     bool drawModelCurve1 = false;
     bool drawModelCurve2 = false;
     bool drawBSpline1 = false;
     bool drawBSpline2 = false;
     bool drawSubdivisionCurve = false;
-    bool drawBlendingSplineCurve = false;
-    bool drawBlendingSplineSurface = true;
+    bool drawBlendingSplineCurve = true;
+    bool drawBlendingSplineSurface = false;
 
 
     /* Test torus */
-    if (drawTorus) {
+    if (drawTestTorus) {
         auto ptom = new TestTorus(1.0f, 0.4f, 0.6f);
         ptom->toggleDefaultVisualizer();
         ptom->sample(60,60,1,1);
@@ -190,7 +191,6 @@ void Scenario::initializeScenario() {
 
     /* Test blending spline curve */
     if (drawBlendingSplineCurve) {
-        // auto model_curve = new MyModelCurve1<float>(5, 5, 3, 2);
         auto model_curve = new MyModelCurve2<float>(8, 3, 1.8);
         auto blending_spline = new MyBlendingSplineCurve<float>(model_curve, 9);
 
@@ -216,23 +216,17 @@ void Scenario::initializeScenario() {
             Vector<float,3>(8,0,0),
             Vector<float,3>(0,8,0));
 
-        // auto plane2 = new PPlane<float>(
-        //     Point<float,3>(-4,-4,0),
-        //     Vector<float,3>(8,0,0),
-        //     Vector<float,3>(0,8,0));
-        // plane2->toggleDefaultVisualizer();
-        // plane2->sample(20,20,1,1);
-        // plane2->translate(Vector<float,3>(0,0,-3));
-        // plane2->setColor(GMlib::Color(255, 255, 0));
-        // plane2->setMaterial(mm2);
-        // this->scene()->insert(plane2);
+        auto cylinder = new PCylinder<float>(2, 2, 3);
+
+        auto torus = new PTorus<float>(2, 0.5, 0.5);
 
         auto blending_spline = new MyBlendingSplineSurface<float>(
-            plane, 3, 3);
+            torus, 3, 3);
         blending_spline->toggleDefaultVisualizer();
-        blending_spline->sample(10,10,1,1);
-        blending_spline->setMaterial(mm2);
+        blending_spline->sample(20,20,1,1);
+        blending_spline->setMaterial(mm);
         blending_spline->insertVisualizer(n_vis);
+
         this->scene()->insert(blending_spline);
     }
 }

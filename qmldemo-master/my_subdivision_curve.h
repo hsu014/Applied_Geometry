@@ -10,7 +10,6 @@ using namespace GMlib;
 /*
  * Closed Subdivision Curve
  * Lane Riesenfeld
- * Degrees 2, 3, 4
 */
 template <typename T>
 class MySubdivisionCurve : public PCurve<T,3> {
@@ -54,6 +53,7 @@ inline
 template <typename T>
 inline
     MySubdivisionCurve<T>::MySubdivisionCurve(const MySubdivisionCurve<T>& copy ) : PCurve<T,3>(copy) {
+
     _P = copy._P;
     _isClosed = copy._isClosed;
 }
@@ -73,15 +73,6 @@ bool MySubdivisionCurve<T>::isClosed() const {
 
 
 
-/*!
-   *  Evaluation of the curve at a given parameter value
-   *  To compute position and d derivatives at parameter value t on the curve.
-   *  7 derivatives are implemented
-   *
-   *  \param  t[in]  The parameter value to evaluate at
-   *  \param  d[in]  The number of derivatives to compute
-   *  \param  l[in]  (dummy) because left and right are always equal
-   */
 template <typename T>
 void MySubdivisionCurve<T>::eval( T t, int d, bool /*l*/ ) const {
     this->_p.setDim( d + 1 );
@@ -124,13 +115,6 @@ void MySubdivisionCurve<T>::LaneRiesenfeldClosed(std::vector<DVector<Vector<T,3>
         n = doublePart(ph, n);
         smoothPartClosed(ph, n, d);
     }
-
-    // Print content of ph:
-    // std::cout << "ph: " << m <<  std::endl;
-    // for (int i=0; i<m; i++) {
-    //     std::cout << ph[i][0] <<  std::endl;
-    // }
-
 }
 
 
@@ -149,6 +133,7 @@ int MySubdivisionCurve<T>::doublePart(std::vector<DVector<Vector<T,3>>>& ph, int
 
 template <typename T>
 void MySubdivisionCurve<T>::smoothPartClosed(std::vector<DVector<Vector<T,3>>>& ph, int n, int d) const {
+
     for (int j=1; j < d; j++) {
         for (int i=0; i < n-1; i++) {
             ph[i][0] = 0.5 * (ph[i][0] + ph[i+1][0]);

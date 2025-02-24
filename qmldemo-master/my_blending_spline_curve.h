@@ -6,6 +6,7 @@
 #include "../gmlib-master/modules/parametrics/gmpcurve.h"
 #include "../gmlib-master/modules/parametrics/curves/gmpsubcurve.h"
 
+
 using namespace GMlib;
 
 
@@ -43,7 +44,7 @@ private:
     Vector<T,3>             B(int i, T t) const;                        // Basis functions for given t
     T                       Bl(T x) const;                              // Blending(B)-function
     int                     find_i(T t) const;                          // Find index i for given t
-    void                    make_knot_vector(int n, int d, T s, T e, bool closed);      // Create the knot vector _t
+    void                    make_knot_vector(int n, int d, T s, T e, bool closed);
     void                    make_local_curves(int n, bool closed);
 
     // For animation
@@ -57,7 +58,6 @@ private:
     float                   _scale;
     float                   _scale_val;
     bool                    _scale_increase;
-
 
 }; // END class MyBlendingSplineCurve
 
@@ -85,26 +85,8 @@ inline
     auto s = _cu->getParStart();
     auto e = _cu->getParEnd();
 
-    // make_knot_vector(_n, d, s, e);
-    // std::cout << "Knot vector open:  " << _t << std::endl;
-    // _t.clear();
-    // make_knot_vector_closed(_n, d, s, e);
-    // std::cout << "Knot vector closed:  " << _t << std::endl;
-    // _t.clear();
-
-    // if (_cu->isClosed()){
-    //     make_knot_vector_closed(_n, _d, s, e);
-    //     make_local_curves(_n, true);
-    // }
-    // else{
-    //     make_knot_vector(_n, _d, s, e);
-    //     make_local_curves(_n, false);
-    // }
-
     make_knot_vector(_n, _d, s, e, isClosed());
     make_local_curves(_n, isClosed());
-
-
 }
 
 
@@ -117,7 +99,6 @@ inline
     _cu = copy._cu;
     _n = copy._n;
     _t = copy._t;
-
 }
 
 
@@ -130,6 +111,7 @@ MyBlendingSplineCurve<T>::~MyBlendingSplineCurve() {}
 
 template <typename T>
 void MyBlendingSplineCurve<T>::sample(int m, int d) {
+
     _sample = m;
 
     PCurve<T,3>::sample(m, d);
@@ -162,6 +144,7 @@ void MyBlendingSplineCurve<T>::toggleAnimate() {
    */
 template <typename T>
 void MyBlendingSplineCurve<T>::eval( T t, int d, bool /*l*/ ) const {
+
     this->_p.setDim( d + 1 );
 
     int i = find_i(t);
@@ -213,9 +196,9 @@ void MyBlendingSplineCurve<T>::animate(double dt) {
 
     _rotation_val += _rotation_dir * dt;
 
-    // Translate segments
-    float lim_trans = 1.6;
-    float speed = 0.3;
+    // Translate curve
+    float lim_trans = 2.6;
+    float trans_speed = 0.4;
     if (_trans_val > lim_trans)     _trans_dir = -1;
     if (_trans_val < -1*lim_trans)  _trans_dir = 1;
 
@@ -234,7 +217,7 @@ void MyBlendingSplineCurve<T>::animate(double dt) {
 
     _color_val += _color_dir * dt * col_scale;
 
-    // Scale
+    // Scale curve
     float scale_min = 0.8;
     float scale_max = 1.3;
     if (_scale > scale_max) _scale_increase = false;
@@ -245,20 +228,18 @@ void MyBlendingSplineCurve<T>::animate(double dt) {
 
 
     for (int i = 0; i<_c.getDim()-1; i++) {
-        // Relative to parrent. Values used as s vector that points away from center of parrent.
+        // Position values used as s vector that points away from center of parrent.
         auto pos = _c[i]->getPos();
 
         if (i%2 == 0) {
             _c[i]->rotate(dt * _rotation_dir, Vector<float,3>(pos[0], pos[1], pos[2])*-1);
-            //_c[i]->translate(Vector<float,3>(0, 0, 1)*dt*_rotation_dir*speed);
         }
         else {
             _c[i]->rotate(dt * _rotation_dir, Vector<float,3>(pos[0], pos[1], pos[2]));
-            //_c[i]->translate(Vector<float,3>(0, 0, -1)*dt*_rotation_dir*speed);
         }
     }
 
-    this->translate(Vector<float,3>(0, 0, 1)*dt*_rotation_dir*speed);
+    this->translate(Vector<float,3>(0, 0, 1)*dt*_trans_dir*trans_speed);
     this->setColor(GMlib::Color(int(_color_val), 150, 0));
     if (_scale_increase) this->scale(_scale_val);
     else this->scale(1 / _scale_val);
@@ -288,8 +269,6 @@ Vector<T,3> MyBlendingSplineCurve<T>::B(int i, T t) const {
 
 template <typename T>
 T MyBlendingSplineCurve<T>::Bl(T x) const {
-    // return x;
-    // return 3 * pow(x, 2) - 2 * pow(x, 3)
     return 0.5 - 0.5 * cos(M_PI * x);                   // same as pow(sin(M_Pi * x / 2), 2);
 }
 

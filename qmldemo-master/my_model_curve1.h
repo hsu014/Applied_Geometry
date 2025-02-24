@@ -41,6 +41,7 @@ private:
 template <typename T>
 inline
     MyModelCurve1<T>::MyModelCurve1(T a, T b, T k_x, T k_y) : PCurve<T,3>(20, 0, 0) {
+
     _a = a;
     _b = b;
     _k_x = k_x;
@@ -53,6 +54,7 @@ inline
 template <typename T>
 inline
     MyModelCurve1<T>::MyModelCurve1( const MyModelCurve1<T>& copy ) : PCurve<T,3>(copy) {
+
     _a = copy._a;
     _b = copy._b;
     _k_x = copy._k_x;
@@ -74,22 +76,14 @@ bool MyModelCurve1<T>::isClosed() const {
 
 
 
-/*!
-   *  Evaluation of the curve at a given parameter value
-   *  To compute position and d derivatives at parameter value t on the curve.
-   *  7 derivatives are implemented
-   *
-   *  \param  t[in]  The parameter value to evaluate at
-   *  \param  d[in]  The number of derivatives to compute
-   *  \param  l[in]  (dummy) because left and right are always equal
-   */
 template <typename T>
 void MyModelCurve1<T>::eval( T t, int d, bool /*l*/ ) const {
+
     this->_p.setDim( d + 1 );
 
     this->_p[0][0] = _a * cos(_k_x * t);            // x
     this->_p[0][1] = _b * sin(_k_y * t);            // y
-    this->_p[0][2] = 0;//0.5 * (_a+_b) / 2 * sin(t);    // z
+    this->_p[0][2] = T(0);                          // z
 }
 
 
