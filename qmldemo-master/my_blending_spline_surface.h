@@ -268,12 +268,12 @@ template <typename T>
 void MyBlendingSplineSurface<T>::make_knot_vector(std::vector<T>& tt, int n, int d, T s, T e, bool closed) {
 
     if (closed) {
-        for (int i = -d; i<n+d; i++) tt.push_back((e-s)/(n-d)*(i));
+        for (int i = -d; i<n+d; i++) tt.push_back(s + (e-s)/(n-d)*(i));
     }
     else{
         for (int i = 0; i<=d; i++) tt.push_back(s);
 
-        for (int i = d+1; i<n; i++) tt.push_back((e-s)/(n-d)*(i-d));
+        for (int i = d+1; i<n; i++) tt.push_back(s + (e-s)/(n-d)*(i-d));
 
         for (int i = 0; i<=d; i++) tt.push_back(e);
     }
@@ -284,10 +284,6 @@ void MyBlendingSplineSurface<T>::make_knot_vector(std::vector<T>& tt, int n, int
 template <typename T>
 void MyBlendingSplineSurface<T>::make_local_surfaces(int nu, int nv, bool closedU, bool closedV) {
 
-    // closedU = true;
-    // closedV = true;
-
-
     _c = DMatrix<PSurf<T,3>*>(nu, nv);
 
     if (closedU) nu -= 1;
@@ -295,14 +291,10 @@ void MyBlendingSplineSurface<T>::make_local_surfaces(int nu, int nv, bool closed
 
     for (int i = 0; i<nu; i++) {
         for (int j = 0; j<nv; j++){
-            // PSimpleSubSurf( GMlib::PSurf<T,3>* s, T su, T eu, T u, T sv, T ev, T v);
             auto sub_surf = new PSimpleSubSurf<T>(_su,
                                                   _u[i], _u[i+2], _u[i+1],
                                                   _v[j], _v[j+2], _v[j+1]);
             _c[i][j] = sub_surf;
-
-            // std::cout << "subcurve from u=" << _u[i] << " to u=" << _u[i+2] << std::endl;
-            // std::cout << "subcurve from v=" << _v[j] << " to v=" << _v[j+2] << std::endl << std::endl;
 
             // Visualize subcurves:
             sub_surf->toggleDefaultVisualizer();
@@ -324,9 +316,7 @@ void MyBlendingSplineSurface<T>::make_local_surfaces(int nu, int nv, bool closed
     if (closedU and closedV){
         _c[nu][nv] = _c[0][0];
     }
-    std::cout << "_c: " << _c << std::endl;
 }
-
 
 
 

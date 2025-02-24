@@ -314,12 +314,12 @@ template <typename T>
 void MyBlendingSplineCurve<T>::make_knot_vector(int n, int d, T s, T e, bool closed) {
 
     if (closed) {
-        for (int i = -d; i<n+d; i++) _t.push_back((e-s)/(n-d)*(i));
+        for (int i = -d; i<n+d; i++) _t.push_back(s + (e-s)/(n-d)*(i));
     }
     else {
         for (int i = 0; i<=d; i++) _t.push_back(s);
 
-        for (int i = d+1; i<n; i++) _t.push_back((e-s)/(n-d)*(i-d));
+        for (int i = d+1; i<n; i++) _t.push_back(s + (e-s)/(n-d)*(i-d));
 
         for (int i = 0; i<=d; i++) _t.push_back(e);
     }
