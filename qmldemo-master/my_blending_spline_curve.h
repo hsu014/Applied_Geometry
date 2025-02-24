@@ -9,15 +9,15 @@
 using namespace GMlib;
 
 
-// B-Spline
-// Hardcoded degree 2
+// Blending Spline Curve
+// Hardcoded degree 1
 template <typename T>
 class MyBlendingSplineCurve : public PCurve<T,3> {
     GM_SCENEOBJECT(MyBlendingSplineCurve)
 
 public:
     MyBlendingSplineCurve(PCurve<T,3>* cu, int n);
-    MyBlendingSplineCurve(const MyBlendingSplineCurve<T>& copy );
+    MyBlendingSplineCurve(const MyBlendingSplineCurve<T>& copy);
     virtual ~MyBlendingSplineCurve();
 
     void                    sample(int m, int d = 0) override;
@@ -25,7 +25,6 @@ public:
     void                    toggleAnimate();
 
 protected:
-    // Virtual functions from PCurve, which have to be implemented locally
     void                    eval( T t, int d, bool /*l*/ ) const override;
     T                       getStartP() const override;
     T                       getEndP()   const override;
@@ -36,6 +35,7 @@ private:
     std::vector<T>          _t;                                         // knot vector
     DVector<PCurve<T,3>*>   _c;                                         // subcurves
     int                     _n;                                         // Number of control points
+    int                     _d;                                         // Degree
     PCurve<T,3>*            _cu;                                        // Model curve
     int                     _sample;
 
@@ -43,8 +43,7 @@ private:
     Vector<T,3>             B(int i, T t) const;                        // Basis functions for given t
     T                       Bl(T x) const;                              // Blending(B)-function
     int                     find_i(T t) const;                          // Find index i for given t
-    void                    make_knot_vector(int n, int d, T s, T e);           // Create the knot vector _t
-    void                    make_knot_vector_closed(int n, int d, T s, T e);    // Create the closed knot vector _t
+    void                    make_knot_vector(int n, int d, T s, T e, bool closed);      // Create the knot vector _t
     void                    make_local_curves(int n, bool closed);
 
     // For animation
@@ -67,9 +66,10 @@ private:
 // Constructor 1
 template <typename T>
 inline
-    MyBlendingSplineCurve<T>::MyBlendingSplineCurve(PCurve<T,3>* cu, int n) : PCurve<T,3>(20, 0, 0), _cu(cu), _n(n) {
+    MyBlendingSplineCurve<T>::MyBlendingSplineCurve(PCurve<T,3>* cu, int n) : PCurve<T,3>(20, 0, 0),
+    _cu(cu), _n(n) {
 
-    int d = 1;                       // Degree of blending spline curve hardcoded as 1
+    _d = 1;                       // Degree of blending spline curve hardcoded as 1
 
     _animate = false;
     _rotation_val = 0.0;
@@ -92,14 +92,19 @@ inline
     // std::cout << "Knot vector closed:  " << _t << std::endl;
     // _t.clear();
 
-    if (_cu->isClosed()){
-        make_knot_vector_closed(_n, d, s, e);
-        make_local_curves(_n-1, true);
-    }
-    else{
-        make_knot_vector(_n, d, s, e);
-        make_local_curves(_n, false);
-    }
+    // if (_cu->isClosed()){
+    //     make_knot_vector_closed(_n, _d, s, e);
+    //     make_local_curves(_n, true);
+    // }
+    // else{
+    //     make_knot_vector(_n, _d, s, e);
+    //     make_local_curves(_n, false);
+    // }
+
+    make_knot_vector(_n, _d, s, e, isClosed());
+    make_local_curves(_n, isClosed());
+
+
 }
 
 
@@ -109,8 +114,10 @@ template <typename T>
 inline
     MyBlendingSplineCurve<T>::MyBlendingSplineCurve(const MyBlendingSplineCurve<T>& copy) : PCurve<T,3>(copy) {
 
+    _cu = copy._cu;
     _n = copy._n;
     _t = copy._t;
+
 }
 
 
@@ -207,8 +214,8 @@ void MyBlendingSplineCurve<T>::animate(double dt) {
     _rotation_val += _rotation_dir * dt;
 
     // Translate segments
-    float lim_trans = 0.6;
-    float speed = 2.5;
+    float lim_trans = 1.6;
+    float speed = 0.3;
     if (_trans_val > lim_trans)     _trans_dir = -1;
     if (_trans_val < -1*lim_trans)  _trans_dir = 1;
 
@@ -243,14 +250,15 @@ void MyBlendingSplineCurve<T>::animate(double dt) {
 
         if (i%2 == 0) {
             _c[i]->rotate(dt * _rotation_dir, Vector<float,3>(pos[0], pos[1], pos[2])*-1);
-            _c[i]->translate(Vector<float,3>(0, 0, 1)*dt*_rotation_dir*speed);
+            //_c[i]->translate(Vector<float,3>(0, 0, 1)*dt*_rotation_dir*speed);
         }
         else {
             _c[i]->rotate(dt * _rotation_dir, Vector<float,3>(pos[0], pos[1], pos[2]));
-            _c[i]->translate(Vector<float,3>(0, 0, -1)*dt*_rotation_dir*speed);
+            //_c[i]->translate(Vector<float,3>(0, 0, -1)*dt*_rotation_dir*speed);
         }
     }
 
+    this->translate(Vector<float,3>(0, 0, 1)*dt*_rotation_dir*speed);
     this->setColor(GMlib::Color(int(_color_val), 150, 0));
     if (_scale_increase) this->scale(_scale_val);
     else this->scale(1 / _scale_val);
@@ -290,9 +298,7 @@ T MyBlendingSplineCurve<T>::Bl(T x) const {
 template <typename T>
 int MyBlendingSplineCurve<T>::find_i(T t) const {
 
-    int d = 1;      // Hardcoded to degree 1
-    int i = d;
-
+    int i = _d;
     for (; i<_n; i++) {
         if (_t[i+1] > t) {
             return i;
@@ -305,21 +311,18 @@ int MyBlendingSplineCurve<T>::find_i(T t) const {
 
 
 template <typename T>
-void MyBlendingSplineCurve<T>::make_knot_vector(int n, int d, T s, T e) {
+void MyBlendingSplineCurve<T>::make_knot_vector(int n, int d, T s, T e, bool closed) {
 
-    for (int i = 0; i<=d; i++) _t.push_back(s);
+    if (closed) {
+        for (int i = -d; i<n+d; i++) _t.push_back((e-s)/(n-d)*(i));
+    }
+    else {
+        for (int i = 0; i<=d; i++) _t.push_back(s);
 
-    for (int i = d+1; i<n; i++) _t.push_back((e-s)/(n-d)*(i-d));
+        for (int i = d+1; i<n; i++) _t.push_back((e-s)/(n-d)*(i-d));
 
-    for (int i = 0; i<=d; i++) _t.push_back(e);
-}
-
-
-
-template <typename T>
-void MyBlendingSplineCurve<T>::make_knot_vector_closed(int n, int d, T s, T e) {
-
-    for (int i = -1; i<n+d; i++) _t.push_back((e-s)/(n-d)*(i));
+        for (int i = 0; i<=d; i++) _t.push_back(e);
+    }
 }
 
 
@@ -327,13 +330,15 @@ void MyBlendingSplineCurve<T>::make_knot_vector_closed(int n, int d, T s, T e) {
 template <typename T>
 void MyBlendingSplineCurve<T>::make_local_curves(int n, bool closed) {
 
+    if (closed) n -= 1;
+
     for (int i = 0; i<n; i++){
         _c.append(new PSubCurve<T>(_cu, _t[i], _t[i+2], _t[i+1]));
 
         // Visualize subcurves:
         _c.back()->toggleDefaultVisualizer();
         _c.back()->sample(10,0);
-        // _c.back()->setColor(GMlib::Color(200, 50, 0, 50));
+        _c.back()->setColor(GMlib::Color(200, 50, 0, 150));
         _c.back()->setCollapsed(true);
 
         this->insert(_c.back());
