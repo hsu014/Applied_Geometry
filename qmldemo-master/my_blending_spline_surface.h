@@ -5,6 +5,9 @@
 #include "../gmlib-master/modules/parametrics/gmpsurf.h"
 #include "simplesubsurf.h"
 
+#include "../gmlib-master/modules/parametrics/visualizers/gmpsurfnormalsvisualizer.h"
+
+
 using namespace GMlib;
 
 
@@ -145,14 +148,37 @@ void MyBlendingSplineSurface<T>::eval( T u, T v, int d1, int d2, bool /*lu*/, bo
 
     // Du: [1][0]
     // Dv: [0][1]
-    auto du0 = a00[1][0] + dbu[1] * (a10[0][0] - a00[0][0]) + bu[1] * (a10[1][0] - a00[0][0]);
+    auto du0 = a00[1][0] + dbu[1] * (a10[0][0] - a00[0][0]);// + bu[1] * (a10[1][0] - a00[0][0]);
     auto dv0 = a00[0][1] +  bu[1] * (a10[0][1] - a00[0][1]);
 
-    auto du1 = a01[1][0] + dbu[1] * (a11[0][0] - a01[0][0]) + bu[1] * (a11[1][0] - a01[0][0]);
-    auto dv1 = a01[0][1] +  bu[1] * (a11[0][1] - a01[0][1]);
+    // auto du1 = a01[1][0] + dbu[1] * (a11[0][0] - a01[0][0]) + bu[1] * (a11[1][0] - a01[0][0]);
+    // auto dv1 = a01[0][1] +  bu[1] * (a11[0][1] - a01[0][1]);
 
-    this->_p[1][0] = du0 +  bv[1] * (du1 - du0);
-    this->_p[0][1] = dv0 + dbv[1] * (c1 - c0) + bv[1] * (dv1 - dv0);
+    // this->_p[1][0] = du0 +  bv[1] * (du1 - du0);
+    // this->_p[0][1] = dv0 + dbv[1] * (c1 - c0) + bv[1] * (dv1 - dv0);
+
+    this->_p[1][0] = du0 +  bv[1] * (c1 - c0);
+    this->_p[0][1] = dv0 + dbv[1] * (c1 - c0) + bv[1] * (c1 - c0);
+
+
+
+    // Martin's code:
+    // Vector<T,2> Bi = B(_u, i, u);
+    // Vector<T,2> Bi_dev = dB(_u, i, u);
+    // Vector<T,2> Bj = B(_v, j, v);
+    // Vector<T,2> Bj_dev = dB(_v, j, v);
+
+    // // auto c0 = a00[0][0] + Bi[1] * (a10[0][0] - a00[0][0] );
+    // // auto c1 = a01[0][0] + Bi[1] * (a11[0][0] - a01[0][0]);
+
+    // this->_p[0][0] = c0 + Bj[1] * (c1-c0);
+
+    // auto du = a00[1][0] + Bi_dev[1] * (a10[1][0] - a00[1][0]);
+    // auto dv = a00[0][1] + Bi[1]     * (a10[0][1] - a00[0][1]);
+
+    // this->_p[1][0] = du + Bj[1] * (c1 - c0);
+    // //this-> _p[0][1] = dv + Bj_dev[1] * (c1-c0);
+    // this-> _p[0][1] = dv + Bj_dev[1] * (c1-c0) + Bj[1] * (c1-c0);
 }
 
 
@@ -301,6 +327,9 @@ void MyBlendingSplineSurface<T>::make_local_surfaces(int nu, int nv, bool closed
             sub_surf->sample(10, 10, 1, 1);
             sub_surf->setColor(GMlib::Color(200, 50, 0));
             sub_surf->setCollapsed(true);
+
+            // auto n_vis = new PSurfNormalsVisualizer<float, 3>();
+            // sub_surf->insertVisualizer(n_vis);
 
             this->insert(sub_surf);
         }
