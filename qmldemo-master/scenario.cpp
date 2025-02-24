@@ -8,6 +8,9 @@
 #include "my_bspline.h"
 #include "my_subdivision_curve.h"
 #include "my_blending_spline_curve.h"
+#include "my_blending_spline_surface.h"
+#include "../gmlib-master/modules/parametrics/surfaces/gmpplane.h"
+#include "../gmlib-master/modules/parametrics/visualizers/gmpsurfnormalsvisualizer.h"
 
 
 // hidmanager
@@ -68,13 +71,17 @@ void Scenario::initializeScenario() {
     GMlib::Material mm(GMlib::GMmaterial::polishedBronze());
     mm.set(45.0);
 
+    GMlib::Material mm2(GMlib::GMmaterial::jade());
+    mm2.set(45.0);
+
     bool drawTorus = false;
     bool drawModelCurve1 = false;
     bool drawModelCurve2 = false;
     bool drawBSpline1 = false;
     bool drawBSpline2 = false;
     bool drawSubdivisionCurve = false;
-    bool drawBlendingSplineCurve = true;
+    bool drawBlendingSplineCurve = false;
+    bool drawBlendingSplineSurface = true;
 
 
     /* Test torus */
@@ -198,8 +205,35 @@ void Scenario::initializeScenario() {
         blending_spline->setColor(GMlib::Color(255, 0, 0));
 
         this->scene()->insert(blending_spline);
+    }
 
+    /* Test blending spline surface */
+    if (drawBlendingSplineSurface) {
+        auto n_vis = new PSurfNormalsVisualizer<float, 3>();
 
+        auto plane = new PPlane<float>(
+            Point<float,3>(-4,-4,0),
+            Vector<float,3>(8,0,0),
+            Vector<float,3>(0,8,0));
+
+        // auto plane2 = new PPlane<float>(
+        //     Point<float,3>(-4,-4,0),
+        //     Vector<float,3>(8,0,0),
+        //     Vector<float,3>(0,8,0));
+        // plane2->toggleDefaultVisualizer();
+        // plane2->sample(20,20,1,1);
+        // plane2->translate(Vector<float,3>(0,0,-3));
+        // plane2->setColor(GMlib::Color(255, 255, 0));
+        // plane2->setMaterial(mm2);
+        // this->scene()->insert(plane2);
+
+        auto blending_spline = new MyBlendingSplineSurface<float>(
+            plane, 3, 3);
+        blending_spline->toggleDefaultVisualizer();
+        blending_spline->sample(10,10,1,1);
+        blending_spline->setMaterial(mm2);
+        blending_spline->insertVisualizer(n_vis);
+        this->scene()->insert(blending_spline);
     }
 }
 
