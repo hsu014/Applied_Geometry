@@ -143,14 +143,8 @@ void MyBlendingSplineSurface<T>::eval( T u, T v, int d1, int d2, bool /*lu*/, bo
 
     // Du: [1][0]
     // Dv: [0][1]
-    auto du0 = a00[1][0] + dbu[1] * (a10[0][0] - a00[0][0]);// + bu[1] * (a10[1][0] - a00[0][0]);
+    auto du0 = a00[1][0] + dbu[1] * (a10[0][0] - a00[0][0]);
     auto dv0 = a00[0][1] +  bu[1] * (a10[0][1] - a00[0][1]);
-
-    // auto du1 = a01[1][0] + dbu[1] * (a11[0][0] - a01[0][0]) + bu[1] * (a11[1][0] - a01[0][0]);
-    // auto dv1 = a01[0][1] +  bu[1] * (a11[0][1] - a01[0][1]);
-
-    // this->_p[1][0] = du0 +  bv[1] * (du1 - du0);
-    // this->_p[0][1] = dv0 + dbv[1] * (c1 - c0) + bv[1] * (dv1 - dv0);
 
     this->_p[1][0] = du0 +  bv[1] * (c1 - c0);
     this->_p[0][1] = dv0 + dbv[1] * (c1 - c0) + bv[1] * (c1 - c0);

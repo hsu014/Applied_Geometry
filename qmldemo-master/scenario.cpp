@@ -76,12 +76,13 @@ void Scenario::initializeScenario() {
     mm2.set(10.0);
 
     bool drawTestTorus = false;
-    bool drawModelCurve1 = false;
-    bool drawModelCurve2 = false;
+
+    bool drawModelCurve1 = true;
+    bool drawModelCurve2 = true;
     bool drawBSpline1 = false;
     bool drawBSpline2 = false;
     bool drawSubdivisionCurve = false;
-    bool drawBlendingSplineCurve = true;
+    bool drawBlendingSplineCurve = false;
     bool drawBlendingSplineSurface = false;
 
 
@@ -101,19 +102,13 @@ void Scenario::initializeScenario() {
 
     /* Test model curve */
     if (drawModelCurve1) {
-        auto tcurve = new MyModelCurve1<float>(3, 3, 1, 2);
+        auto tcurve = new MyModelCurve1<float>(3, 3, 3, 5);
         tcurve->toggleDefaultVisualizer();
         tcurve->sample(200,0);
         tcurve->setLineWidth(4);
-        tcurve->translate(Vector<float,3>(0,0,0));
-        this->scene()->insert(tcurve);
+        tcurve->translate(Vector<float,3>(0,5,0));
 
-        auto tcurve2 = new MyModelCurve1<float>(3, 3, 5, 3);
-        tcurve2->toggleDefaultVisualizer();
-        tcurve2->sample(200,0);
-        tcurve2->setLineWidth(4);
-        tcurve2->translate(Vector<float,3>(-7,0,0));
-        this->scene()->insert(tcurve2);
+        this->scene()->insert(tcurve);
     }
 
     if (drawModelCurve2) {
@@ -122,14 +117,9 @@ void Scenario::initializeScenario() {
         tcurve->sample(200,0);
         tcurve->setLineWidth(4);
         tcurve->translate(Vector<float,3>(0,-5,0));
-        this->scene()->insert(tcurve);
+        tcurve->scale(0.5);
 
-        auto tcurve2 = new MyModelCurve2<float>(5, 2, 1);
-        tcurve2->toggleDefaultVisualizer();
-        tcurve2->sample(200,0);
-        tcurve2->setLineWidth(4);
-        tcurve2->translate(Vector<float,3>(0, 5, 0));
-        this->scene()->insert(tcurve2);
+        this->scene()->insert(tcurve);
     }
 
     /* Test b-spline, Constructor 1 */
@@ -147,19 +137,19 @@ void Scenario::initializeScenario() {
         points[9] = GMlib::Vector<float,3>(2, 0, 0);
 
         auto test_bspline1 = new MyBSpline<float>(points);
-
         test_bspline1->toggleDefaultVisualizer();
         test_bspline1->sample(100,0);
         test_bspline1->setLineWidth(4);
-        test_bspline1->translate(Vector<float,3>(1,1,1));
+        test_bspline1->translate(Vector<float,3>(-2,5,0));
+
         this->scene()->insert(test_bspline1);
     }
 
     /* Test b-spline, Constructor 2 */
     if (drawBSpline2) {
         int p = 100;
-        float a = 4;
-        float b = 6;
+        float a = 2;
+        float b = 3;
 
         GMlib::DVector<GMlib::Vector<float,3>> points(p);
         for (int i = 0; i < p; i++) {
@@ -168,10 +158,11 @@ void Scenario::initializeScenario() {
         }
 
         auto test_bspline2 = new MyBSpline<float>(points, 6);
-
         test_bspline2->toggleDefaultVisualizer();
         test_bspline2->sample(100,0);
         test_bspline2->setLineWidth(4);
+        test_bspline2->translate(Vector<float,3>(0,-5,0));
+
         this->scene()->insert(test_bspline2);
     }
 
@@ -185,7 +176,8 @@ void Scenario::initializeScenario() {
 
         auto test_sub = new MySubdivisionCurve<float>(points);
         test_sub->toggleDefaultVisualizer();
-        test_sub->sample(4,2);
+        test_sub->sample(1,2);
+
         this->scene()->insert(test_sub);
     }
 
@@ -198,7 +190,6 @@ void Scenario::initializeScenario() {
         blending_spline->sample(200,0);
         blending_spline->toggleAnimate();
 
-        blending_spline->translate(Vector<float,3>(-3,0,0));
         blending_spline->rotate(0.6, Vector<float,3>(0, 1, 0));
         blending_spline->scale(0.7);
         blending_spline->setLineWidth(5);
@@ -221,7 +212,7 @@ void Scenario::initializeScenario() {
         auto torus = new PTorus<float>(2, 0.5, 0.5);
 
         auto blending_spline = new MyBlendingSplineSurface<float>(
-            torus, 3, 3);
+            plane, 3, 3);
         blending_spline->toggleDefaultVisualizer();
         blending_spline->sample(20,20,1,1);
         blending_spline->setMaterial(mm);
