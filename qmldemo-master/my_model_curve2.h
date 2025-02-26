@@ -76,11 +76,12 @@ bool MyModelCurve2<T>::isClosed() const {
 
 template <typename T>
 void MyModelCurve2<T>::eval( T t, int d, bool /*l*/ ) const {
+
     this->_p.setDim( d + 1 );
 
-    this->_p[0][0] = (_R-_r) * cos(t) + _d * cos((_R-_r)/_r*t);     // x
-    this->_p[0][1] = (_R-_r) * sin(t) - _d * sin((_R-_r)/_r*t);     // y
-    this->_p[0][2] = T(0);                                          // z
+    this->_p[0][0] = (_R-_r) * cos(t) + _d * cos(((_R-_r)/_r) * t);     // x
+    this->_p[0][1] = (_R-_r) * sin(t) - _d * sin(((_R-_r)/_r) * t);     // y
+    this->_p[0][2] = T(0);                                              // z
 }
 
 
@@ -105,6 +106,10 @@ T MyModelCurve2<T>::getEndP() const {
 template <typename T>
 int MyModelCurve2<T>::lcm(int a, int b) const {
 
+    /*
+     * Least common multiple function from GeeksforGeeks:
+     * https://www.geeksforgeeks.org/program-to-find-lcm-of-two-numbers/
+    */
     int greater = std::max(a, b);
     int smallest = std::min(a, b);
     for (int i = greater; ; i += greater) {
