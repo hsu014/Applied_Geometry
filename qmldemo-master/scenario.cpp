@@ -211,6 +211,7 @@ void Scenario::initializeScenario() {
 
         auto torus = new PTorus<float>(2, 0.5, 0.5);
 
+        // Select input variable in blending_spline between plane, cylinder and torus:
         auto blending_spline = new MyBlendingSplineSurface<float>(
             plane, 3, 3);
         blending_spline->toggleDefaultVisualizer();
