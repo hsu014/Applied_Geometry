@@ -4,6 +4,7 @@
 
 
 #include "../gmlib-master/modules/parametrics/gmpcurve.h"
+#include "../gmlib-master/modules/parametrics/curves/gmpcircle.h"
 
 using namespace GMlib;
 
@@ -115,6 +116,8 @@ void MySubdivisionCurve<T>::LaneRiesenfeldClosed(std::vector<DVector<Vector<T,3>
         n = doublePart(ph, n);
         smoothPartClosed(ph, n, d);
     }
+
+
 }
 
 
@@ -152,6 +155,19 @@ void MySubdivisionCurve<T>::sample( int m, int d ) {
     LaneRiesenfeldClosed(_visu[0].sample_val, m, d);
 
     computeSurroundingSphere(_visu[0].sample_val, _visu[0].sur_sphere);
+
+    // Visualize points
+    int b = pow(2, m) * _P.getDim() + 1;
+    for (int i=0; i<b; i++) {
+        auto point = new PCircle<T>(T(0));
+
+        point->toggleDefaultVisualizer();
+        point->sample(1,0);
+        point->setCollapsed(true);
+        point->translate(_visu[0].sample_val[i][0]);
+
+        this->insert(point);
+    }
 
     this->setEditDone();
 }
