@@ -91,7 +91,6 @@ inline
     B_inv.invert();
 
     DVector<Vector<T,3>> c = B_inv * y;
-    std::cout << "c: " << c << std::endl;
 
     _c = c;
 }
